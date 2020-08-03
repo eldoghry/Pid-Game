@@ -45,19 +45,20 @@ document.querySelector('.btn-hold').addEventListener('click',function(){
     if(gameState){
         // add round score to Global Score and reset round score
         scores[activePlayer] += roundScore;
-        roundScore = 0;
         document.getElementById('current-'+activePlayer).textContent = roundScore;
         document.getElementById('score-' + activePlayer).textContent = scores[activePlayer];
         
         // check if user is winner or not
-        if(scores[activePlayer] < 20){
+        if(scores[activePlayer] < 100){
             // change active player
+            roundScore = 0;
             document.getElementById('current-'+activePlayer).textContent = roundScore;
             activePlayer === 0 ? activePlayer = 1 : activePlayer = 0;
             nextPlayer();
         }else{
             // winner logic
             document.getElementById('name-' + activePlayer).textContent = 'Winner'
+            document.querySelector('.player-' + activePlayer + '-panel').classList.remove('active');
             document.querySelector('.player-' + activePlayer + '-panel').classList.add('winner');
             document.querySelector('.dice').style.display = 'none'
             
