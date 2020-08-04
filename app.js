@@ -15,8 +15,8 @@ Change the game to follow these rules:
 3. Add another dice to the game, so that there are two dices now. The player looses his current score when one of them is a 1. (Hint: you will need CSS to position the second dice, so take a look at the CSS code for the first one.)
 
 easy -> normal game
-medium -> loose score when two 6 a row 
-hard -> play with 2 dice when one of them is 1
+medium -> play with 2 dice when one of them is 1 
+hard -> loose score when two 6 a row 
 
 */
 
@@ -38,40 +38,49 @@ document.querySelector('.btn-roll').addEventListener('click', function () {
 
 
         switch (gameMode) {
+
             case 'medium':
                 // medium mode    
-                flag = (dice !== 1 && !( dice === 6 && dice === lastDice));
-                break;
-
-            case 'hard':
                 //console.log('hard');
                 var dice2 = Math.floor(Math.random() * 6) + 1;
                 var diceDom2 = document.querySelector('.dice2');
                 diceDom2.setAttribute('src', 'dice-' + dice2 + '.png')
-                flag = (dice !==1 && dice2 !== 1)
+                flag = (dice !== 1 && dice2 !== 1)
+                break;
+
+            case 'hard':
+                flag = (dice !== 1 && !(dice === 6 && dice === lastDice));
                 break;
 
             default:
                 // easy mode
-                flag = (dice !== 1);                 
+                flag = (dice !== 1);
         }
 
         if (flag) {
             // 2- update round of current player
             roundScore += dice;
-            
-            if(gameMode === 'hard'){
+
+            if (gameMode === 'medium') {
                 roundScore += dice2;
             }
 
             document.getElementById('current-' + activePlayer).textContent = roundScore;
-            lastDice = dice; // used in medium mode only
+            lastDice = dice; // used in hard mode only
         }
         else {
+
+            // hard condition only
+            if (dice == 6 && lastDice == 6) {
+                // reset active user total score
+                scores[activePlayer] = 0
+                document.getElementById('score-' + activePlayer).textContent = '0';
+            }
+
             roundScore = 0;
             document.getElementById('current-' + activePlayer).textContent = roundScore;
             activePlayer === 0 ? activePlayer = 1 : activePlayer = 0;
-            lastDice = 0; // used in medium mode only
+            lastDice = 0; // used in hard mode only
             // toggal active class
             nextPlayer();
         }
@@ -100,8 +109,8 @@ document.querySelector('.btn-hold').addEventListener('click', function () {
             document.querySelector('.player-' + activePlayer + '-panel').classList.remove('active');
             document.querySelector('.player-' + activePlayer + '-panel').classList.add('winner');
             document.querySelector('.dice').style.display = 'none'
-            
-            if(gameMode =='hard')
+
+            if (gameMode == 'medium')
                 document.querySelector('.dice2').style.display = 'none'
 
             // stop game 
@@ -151,9 +160,11 @@ function init() {
     winnerScore ? '' : winnerScore = 100;
     gameMode ? '' : gameMode = 'easy';
 
-    if(gameMode == 'hard'){
+    if (gameMode == 'medium') {
         document.querySelector('.dice').classList.add('dice1');
-        document.querySelector('.wrapper').insertAdjacentHTML( 'beforeend', '<img src="dice-5.png" alt="Dice" class="dice dice2">');
+        document.querySelector('.wrapper').insertAdjacentHTML('beforeend', '<img src="dice-5.png" alt="Dice" class="dice dice2">');
+    } else {
+        document.querySelector('.dice').classList.remove('dice1');
     }
 
     // console.log(winnerScore, diceCount)
